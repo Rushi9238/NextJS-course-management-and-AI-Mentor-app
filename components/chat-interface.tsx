@@ -68,7 +68,7 @@ export function ChatInterface({ sessionId, courseId, initialMessages = [], onMes
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: aiResponse.response,
+        content: aiResponse.data.response,
         timestamp: new Date().toISOString(),
       }
 
