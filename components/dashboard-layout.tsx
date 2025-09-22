@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -29,6 +30,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children, activeTab }: DashboardLayoutProps) {
   const { user, logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const router=useRouter()
 
   const getNavigationItems = () => {
     const baseItems = [
@@ -58,17 +60,22 @@ export function DashboardLayout({ children, activeTab }: DashboardLayoutProps) {
     return baseItems
   }
 
+  const handleLogout=()=>{
+    const respoanse =  logout()
+    router.push('/login')
+  }
+
   return (
     <div className=" bg-background ">
-      <div className="flex h-screen">
+      <div className="flex h-screen ">
         {isMobileMenuOpen && (
           <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
         )}
 
         <aside
           className={cn(
-            "fixed lg:static inset-y-0 left-0 z-50 w-64 min-h-screen bg-card/30 border-r border-border/50 backdrop-blur-sm transform transition-transform duration-200 ease-in-out lg:transform-none",
-            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+            "fixed lg:static inset-y-0 left-0 z-50 w-64 min-h-screen  border-r border-border/50 backdrop-blur-sm transform transition-transform duration-200 ease-in-out lg:transform-none",
+            isMobileMenuOpen ? "translate-x-0 bg-white" : "-translate-x-full lg:translate-x-0 bg-card/30",
           )}
         >
           <div className="lg:hidden absolute top-4 right-4">
@@ -124,7 +131,7 @@ export function DashboardLayout({ children, activeTab }: DashboardLayoutProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={logout}
+              onClick={handleLogout}
               className="w-full justify-start text-muted-foreground hover:text-foreground"
             >
               <LogOut className="h-4 w-4 mr-2" />

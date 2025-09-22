@@ -99,7 +99,7 @@ export async function GET(req: Request) {
 
     const history = await ChatHistory.find({ userId }).sort({ createdAt: -1 });
 
-    return NextResponse.json({ history });
+    return NextResponse.json({ status:true, history });
   } catch (error: any) {
     console.error("History fetch error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

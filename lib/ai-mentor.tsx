@@ -15,9 +15,7 @@ export interface ChatSession {
   title: string
   messages: ChatMessage[]
   createdAt: string
-  updatedAt: string
-  courseId?: string
-  status: "active" | "archived"
+  updatedAt?: string
 }
 
 // Mock chat sessions
@@ -45,8 +43,6 @@ export const mockChatSessions: ChatSession[] = [
     ],
     createdAt: "2024-03-15T10:30:00Z",
     updatedAt: "2024-03-15T10:30:30Z",
-    courseId: "1",
-    status: "active",
   },
   {
     id: "2",
@@ -70,8 +66,6 @@ export const mockChatSessions: ChatSession[] = [
     ],
     createdAt: "2024-03-14T15:20:00Z",
     updatedAt: "2024-03-14T15:20:45Z",
-    courseId: "2",
-    status: "active",
   },
 ]
 
@@ -88,8 +82,6 @@ export const createChatSession = (userId: string, title: string, courseId?: stri
     messages: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    courseId,
-    status: "active",
   }
 
   mockChatSessions.push(newSession)

@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Send, Bot, User, Sparkles, BookOpen, Clock } from "lucide-react"
 import { type ChatMessage, generateAIResponse, getSuggestedPrompts } from "@/lib/ai-mentor"
 import { useAuth } from "@/contexts/auth-context"
+import axios from "axios"
 
 interface ChatInterfaceProps {
   sessionId?: string
@@ -53,12 +54,21 @@ export function ChatInterface({ sessionId, courseId, initialMessages = [], onMes
 
     try {
       // Generate AI response
-      const aiResponse = await generateAIResponse(content, { courseId })
+      // const aiResponse = await generateAIResponse(content, { courseId })
+      const payload={
+        prompt:content
+      }
+      // const aiResponse:any = await axios.post('/api/chat',payload,{
+      //    withCredentials: true
+      // })
+      const aiResponse = {
+    "response": "Optimizing React component performance involves a multi-pronged approach focusing on minimizing re-renders, efficiently managing state, and optimizing the rendering process itself. Here's a breakdown of key strategies:\n\n**1. Prevent Unnecessary Re-renders:**\n\n* **`useMemo` and `useCallback`:** These Hooks are crucial for memoizing expensive computations and callbacks.  `useMemo` returns a memoized value, only recalculating when dependencies change. `useCallback` returns a memoized callback, preventing unnecessary recreations and thus re-renders of child components.\n\n```javascript\nimport React, { useMemo, useCallback, useState } from 'react';\n\nfunction MyComponent() {\n  const [count, setCount] = useState(0);\n  const [name, setName] = useState('');\n\n  // Memoize the expensive calculation\n  const expensiveCalculation = useMemo(() => {\n    // Simulate an expensive operation\n    let result = 0;\n    for (let i = 0; i < 1000000; i++) {\n      result += i;\n    }\n    return result;\n  }, []); // Empty dependency array means it only calculates once\n\n  // Memoize the callback\n  const handleClick = useCallback(() => {\n    setCount(count + 1);\n  }, [count]); // Dependency array includes count, recalculates only when count changes\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <p>Result: {expensiveCalculation}</p>\n      <button onClick={handleClick}>Increment</button>\n      <input type=\"text\" value={name} onChange={e => setName(e.target.value)} />\n      {/* Child components will receive the memoized handleClick */}\n      <ChildComponent handleClick={handleClick} />\n    </div>\n  );\n}\n\nfunction ChildComponent({ handleClick }) {\n    return <button onClick={handleClick}>Increment from Child</button>\n}\n```\n\n* **`React.memo`:** This higher-order component memoizes the component itself. It prevents re-rendering if the props haven't changed using a shallow comparison.  Use this judiciously; it adds overhead.\n\n```javascript\nconst MemoizedComponent = React.memo(MyComponent);\n```\n\n* **Pure Components:**  A legacy approach (generally replaced by `React.memo`),  `React.PureComponent` performs a shallow comparison of props and state.  It's less flexible than `React.memo`.\n\n* **Conditional Rendering:** Only render components when necessary.  Use conditional statements (`if`, `&&`, ternary operator) to avoid rendering unnecessary parts of the UI.\n\n* **Keys for Lists:**  When rendering lists, provide unique `key` props to each item. This helps React efficiently update the list by identifying changes and reusing existing elements.\n\n**2. Optimize State Management:**\n\n* **Avoid unnecessary state updates:**  Only update state when absolutely necessary.  Batch state updates when possible to minimize re-renders.  Consider using libraries like Redux, Zustand, Jotai, or Recoil for complex state management, offering better performance and predictability in larger applications.\n\n* **Immutable updates:**  When updating state, create new objects or arrays instead of modifying existing ones directly. This helps React detect changes more efficiently.  Use spread syntax (`...`) or libraries like Immer to achieve this.\n\n**3. Optimize Rendering Process:**\n\n* **Virtualization:** For large lists, consider using virtualization libraries like `react-window` or `react-virtualized`. These libraries only render the visible items, significantly improving performance.\n\n* **Code splitting:** Break down your application into smaller chunks that are loaded on demand. This reduces the initial load time and improves the perceived performance.  Webpack and other bundlers facilitate this.\n\n* **Lazy Loading:** Load components only when needed, using dynamic imports (`import()`).  This improves initial load time.\n\n* **Profiling:** Use React's Profiler tool or browser developer tools (like Chrome's performance profiler) to identify performance bottlenecks in your application. This will pinpoint which components are causing re-renders and help you prioritize optimization efforts.\n\n**4. Optimize Images:**\n\n* **Use optimized image formats:** Consider using WebP, AVIF, or other modern formats for better compression and quality.\n\n* **Lazy loading images:** Only load images when they are visible in the viewport.  This improves initial load time and reduces bandwidth consumption.\n\n* **Image optimization tools:** Utilize tools to compress and optimize images before deployment.\n\n\n**Example of Lazy Loading:**\n\n```javascript\nconst MyComponent = React.lazy(() => import('./MyComponent'));\n\nfunction App() {\n  return (\n    <div>\n      <React.Suspense fallback={<div>Loading...</div>}>\n        <MyComponent />\n      </React.Suspense>\n    </div>\n  );\n}\n```\n\nBy systematically applying these strategies, you can significantly improve the performance of your React components, leading to a smoother and more responsive user experience. Remember to profile your application to identify specific areas for optimization.\n"
+}
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: aiResponse,
+        content: aiResponse.response,
         timestamp: new Date().toISOString(),
       }
 
@@ -96,7 +106,7 @@ export function ChatInterface({ sessionId, courseId, initialMessages = [], onMes
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-scroll">
       {/* Chat Header */}
       <div className="flex items-center gap-3 p-4 border-b border-border/50">
         <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
@@ -117,7 +127,7 @@ export function ChatInterface({ sessionId, courseId, initialMessages = [], onMes
       </div>
 
       {/* Messages Area */}
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+      <div className="flex-1 p-4" >
         <div className="space-y-4">
           {messages.length === 0 && (
             <div className="text-center py-8">
@@ -222,7 +232,7 @@ export function ChatInterface({ sessionId, courseId, initialMessages = [], onMes
             </div>
           )}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Input Area */}
       <div className="p-4 border-t border-border/50">

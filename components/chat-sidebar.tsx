@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
@@ -8,6 +8,7 @@ import { Plus, MessageSquare, Clock, BookOpen, MoreVertical } from "lucide-react
 import { type ChatSession, getChatSessionsByUser } from "@/lib/ai-mentor"
 import { useAuth } from "@/contexts/auth-context"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import axios from "axios"
 
 interface ChatSidebarProps {
   selectedSessionId?: string
@@ -15,9 +16,33 @@ interface ChatSidebarProps {
   onNewChat: () => void
 }
 
+interface Session{
+  _id:string,
+  prompt:string,
+  response:string,
+  createdAt:string
+}
+
 export function ChatSidebar({ selectedSessionId, onSessionSelect, onNewChat }: ChatSidebarProps) {
   const { user } = useAuth()
-  const [sessions] = useState<ChatSession[]>(user ? getChatSessionsByUser(user.id) : [])
+  // const [sessions] = useState<ChatSession[]>(user ? getChatSessionsByUser(user._id) : [])
+  const [sessions,setSessions]=useState<Session[]>([])
+
+  useEffect(()=>{
+    getUserSessionChat()
+  },[])
+
+  const getUserSessionChat= async()=>{
+    try {
+      const response=await axios.get(`/api/chat?userId=${user?._id}`)
+      if(response.data.status){
+        setSessions(response.data.history)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -74,17 +99,17 @@ export function ChatSidebar({ selectedSessionId, onSessionSelect, onNewChat }: C
             <div className="space-y-2">
               {sessions.map((session) => (
                 <div
-                  key={session.id}
+                  key={session._id}
                   className={`group relative rounded-lg border transition-colors cursor-pointer ${
-                    selectedSessionId === session.id
+                    selectedSessionId === session._id
                       ? "bg-primary/10 border-primary/20 text-primary"
                       : "bg-card/50 border-border/50 hover:bg-card/70 text-foreground"
                   }`}
-                  onClick={() => onSessionSelect(session.id)}
+                  onClick={() => onSessionSelect(session._id)}
                 >
                   <div className="p-3">
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-medium text-sm line-clamp-2 text-balance">{session.title}</h3>
+                      <h3 className="font-medium text-sm line-clamp-2 text-balance">{session.prompt}</h3>
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -98,9 +123,9 @@ export function ChatSidebar({ selectedSessionId, onSessionSelect, onNewChat }: C
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleArchiveSession(session.id)}>Archive</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleArchiveSession(session._id)}>Archive</DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => handleDeleteSession(session.id)}
+                            onClick={() => handleDeleteSession(session._id)}
                             className="text-destructive"
                           >
                             Delete
@@ -111,27 +136,27 @@ export function ChatSidebar({ selectedSessionId, onSessionSelect, onNewChat }: C
 
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                       <Clock className="h-3 w-3" />
-                      {formatDate(session.updatedAt)}
+                      {formatDate(session.createdAt)}
                       <span>•</span>
                       <span>
-                        {session.messages.length} message{session.messages.length !== 1 ? "s" : ""}
+                        {session.response.length} message{session.response.length !== 1 ? "s" : ""}
                       </span>
                     </div>
 
-                    {session.courseId && (
+                    {/* {session.courseId && (
                       <div className="flex items-center gap-1">
                         <Badge variant="secondary" className="text-xs">
                           <BookOpen className="h-3 w-3 mr-1" />
                           Course Context
                         </Badge>
                       </div>
-                    )}
+                    )} */}
 
-                    {session.messages.length > 0 && (
+                    {/* {session.response.length > 0 && (
                       <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
-                        {session.messages[session.messages.length - 1].content}
+                        {session.response[session.response.length - 1].content}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
               ))}

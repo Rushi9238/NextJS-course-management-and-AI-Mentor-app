@@ -122,9 +122,9 @@ export default function LoginPage() {
                   <div>Admin: admin@courseapp.com / password</div>
                   <Button
                     onClick={() => {
-                      setEmail("admin@courseapp.com")
-                      setPassword("password")
-                      handleDemoLogin("admin@courseapp.com", "password")
+                      setEmail("admin@example.com")
+                      setPassword("Admin@123")
+                      handleDemoLogin("admin@example.com", "Admin@123")
                     }}
                     className="cursor-pointer w-full mt-2"
                     variant="outline"

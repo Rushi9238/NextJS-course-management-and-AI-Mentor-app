@@ -108,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("courseapp_user")
     setUserCookie(null)
     dispatch({ type: "LOGOUT" })
+    return true
   }
 
   return <AuthContext.Provider value={{ ...state, login, logout,signUp }}>{children}</AuthContext.Provider>

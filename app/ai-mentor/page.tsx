@@ -74,7 +74,7 @@ export default function AIMentorPage() {
             {selectedSession ? (
               <ChatInterface
                 sessionId={selectedSession.id}
-                courseId={selectedSession.courseId}
+                courseId={"2"}
                 initialMessages={selectedSession.messages}
                 onMessageSent={handleMessageSent}
               />
