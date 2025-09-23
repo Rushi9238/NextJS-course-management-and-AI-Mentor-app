@@ -132,7 +132,7 @@ export default function LoginPage() {
                     Login with Admin
                   </Button>
                 </div>
-                <div>
+                {/* <div>
                   <div>Instructor: instructor@courseapp.com / password</div>
                   <Button
                     onClick={() => {
@@ -159,7 +159,7 @@ export default function LoginPage() {
                   >
                     Login with Student
                   </Button>
-                </div>
+                </div> */}
               </div>
             </div>
           </CardContent>

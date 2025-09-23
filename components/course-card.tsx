@@ -6,6 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Star, Users, Clock, BookOpen } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
+import Image from 'next/image';
+
+import placeholderImage from '../public/javascript-programming-course.png'
 
 interface CourseCardProps {
   course: Course
@@ -43,20 +46,29 @@ export function CourseCard({ course, onEnroll, onEdit, showActions = true, enrol
     <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/70 transition-colors group">
       <CardHeader className="p-0">
         <div className="relative overflow-hidden rounded-t-lg">
-          <img
-            src={course.thumbnail || "/placeholder.svg"}
+          {/* Image */}
+          <Image
+            src={course.thumbnail || placeholderImage}
             alt={course.title}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute top-4 left-4">
+
+          {/* Overlay */}
+          <div className="absolute top-0 left-0 w-full h-full bg-gray-700 opacity-20 z-0" />
+
+          {/* Badge - Level */}
+          <div className="absolute top-4 left-4 z-10">
             <Badge className={getLevelColor(course.level)}>{course.level}</Badge>
           </div>
-          <div className="absolute top-4 right-4">
+
+          {/* Badge - Price */}
+          <div className="absolute top-4 right-4 z-10">
             <Badge variant="secondary" className="bg-background/80 text-foreground">
               ${course.price}
             </Badge>
           </div>
         </div>
+
       </CardHeader>
 
       <CardContent className="p-6">
@@ -69,7 +81,7 @@ export function CourseCard({ course, onEnroll, onEdit, showActions = true, enrol
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
-              {course.enrolledCount ||11}
+              {course.enrolledCount || 11}
             </div>
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
