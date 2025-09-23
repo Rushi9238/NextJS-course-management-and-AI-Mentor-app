@@ -29,7 +29,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault() // Prevent the default form submission
     setError("")
-    console.log(email, password)
 
     const success = await login(email, password)
     if (success) {
@@ -64,7 +63,7 @@ export default function LoginPage() {
 
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+            <CardTitle className="text-2xl text-center">Sign in {isLoading.toString()} </CardTitle>
             <CardDescription className="text-center">Enter your credentials to access your courses</CardDescription>
           </CardHeader>
           <CardContent>
